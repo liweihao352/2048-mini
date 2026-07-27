@@ -1,5 +1,7 @@
 {
-  "dependencies": {
-    "sharp": "^0.35.3"
-  }
+  "name": "genshin-2048",
+  "version": "1.0.0",
+  "description": "原神风格2048网页游戏（纯静态，无构建依赖）",
+  "private": true,
+  "dependencies": {}
 }
