@@ -59,7 +59,7 @@ body {
 }
 /* 原神模式：加载层用大背景图（图加载好后透过 body 可见，加载层本身也用同图保持无缝） */
 body[data-theme="genshin"] .loading-screen {
-  background: var(--bg-page) url("images/bg.jpg") center/cover no-repeat fixed;
+  background: var(--bg-page) url("images/bg_s.jpg") center/cover no-repeat fixed;
 }
 /* 加载完成后淡出隐藏 */
 .loading-screen.loaded {
@@ -514,7 +514,7 @@ body[data-theme="genshin"] {
     linear-gradient(180deg, rgba(245, 248, 255, 0.45) 0%, rgba(220, 230, 250, 0.55) 100%),
     radial-gradient(ellipse at 25% 10%, rgba(255, 240, 200, 0.3), transparent 50%),
     radial-gradient(ellipse at 80% 90%, rgba(180, 210, 250, 0.25), transparent 55%),
-    url("images/bg.jpg") center/cover no-repeat fixed;
+    url("images/bg_s.jpg") center/cover no-repeat fixed;
   background-attachment: fixed;
 }
 

@@ -12,17 +12,17 @@
   // 强制约束：雷电将军=1024、芙宁娜=2048（用户指定）。
   // bg: 该角色的氛围背景图文件名（images/bg_<key>.jpg），由 AI 生图提供，缺图时回退元素色渐变。
   const GENSHIN_CHARS = {
-    2:    { name: '甘雨',     en: 'Ganyu',        element: 'cryo',    symbol: '❄', img: 'ganyu_new',  bg: 'ganyu' },
-    4:    { name: '神里绫华', en: 'Ayaka',        element: 'cryo',    symbol: '❄', img: 'ayaka',      bg: 'ayaka' },
-    8:    { name: '刻晴',     en: 'Keqing',       element: 'electro', symbol: '⚡', img: 'keqing',     bg: 'keqing' },
-    16:   { name: '胡桃',     en: 'Hu Tao',       element: 'pyro',    symbol: '🔥', img: 'hutao',      bg: 'hutao' },
-    32:   { name: '散兵',     en: 'Wanderer',     element: 'anemo',   symbol: '🌬️', img: 'wanderer',   bg: 'wanderer' },
-    64:   { name: '纳西妲',   en: 'Nahida',       element: 'dendro',  symbol: '🌿', img: 'nahida',     bg: 'nahida' },
-    128:  { name: '钟离',     en: 'Zhongli',      element: 'geo',     symbol: '🪨', img: 'zhongli',    bg: 'zhongli' },
-    256:  { name: '枫原万叶', en: 'Kazuha',       element: 'anemo',   symbol: '🌬️', img: 'kazuha',     bg: 'kazuha' },
-    512:  { name: '那维莱特', en: 'Neuvillette',  element: 'hydro',   symbol: '💧', img: 'neuvillette',bg: 'neuvillette' },
-    1024: { name: '芙宁娜',   en: 'Furina',       element: 'hydro',   symbol: '💧', img: 'furina',     bg: 'furina' },
-    2048: { name: '雷电将军', en: 'Raiden',       element: 'electro', symbol: '⚡', img: 'raiden',     bg: 'raiden' },
+    2:    { name: '甘雨',     en: 'Ganyu',        element: 'cryo',    symbol: '❄', img: 'ganyu_s',    bg: 'ganyu' },
+    4:    { name: '神里绫华', en: 'Ayaka',        element: 'cryo',    symbol: '❄', img: 'ayaka_s',    bg: 'ayaka' },
+    8:    { name: '刻晴',     en: 'Keqing',       element: 'electro', symbol: '⚡', img: 'keqing_s',   bg: 'keqing' },
+    16:   { name: '胡桃',     en: 'Hu Tao',       element: 'pyro',    symbol: '🔥', img: 'hutao_s',    bg: 'hutao' },
+    32:   { name: '散兵',     en: 'Wanderer',     element: 'anemo',   symbol: '🌬️', img: 'wanderer_s', bg: 'wanderer' },
+    64:   { name: '纳西妲',   en: 'Nahida',       element: 'dendro',  symbol: '🌿', img: 'nahida_s',   bg: 'nahida' },
+    128:  { name: '钟离',     en: 'Zhongli',      element: 'geo',     symbol: '🪨', img: 'zhongli_s',  bg: 'zhongli' },
+    256:  { name: '枫原万叶', en: 'Kazuha',       element: 'anemo',   symbol: '🌬️', img: 'kazuha_s',   bg: 'kazuha' },
+    512:  { name: '那维莱特', en: 'Neuvillette',  element: 'hydro',   symbol: '💧', img: 'neuvillette_s', bg: 'neuvillette' },
+    1024: { name: '芙宁娜',   en: 'Furina',       element: 'hydro',   symbol: '💧', img: 'furina_s',   bg: 'furina' },
+    2048: { name: '雷电将军', en: 'Raiden',       element: 'electro', symbol: '⚡', img: 'raiden_s',   bg: 'raiden' },
   };
 
   // 元素主色（基于原神官方元素取色，供粒子特效与回退底色读取）
@@ -76,12 +76,12 @@
     const urls = new Set();
     if (currentTheme === 'genshin') {
       // 主大背景
-      urls.add('images/bg.jpg');
-      // 立绘 + 角色氛围背景
+      urls.add('images/bg_s.jpg');
+      // 立绘 + 角色氛围背景（均为压缩版 _s）
       for (const value in GENSHIN_CHARS) {
         const ch = GENSHIN_CHARS[value];
-        if (ch.img) urls.add(`images/${ch.img}.webp?v=6`);
-        if (ch.bg) urls.add(`images/bg_${ch.bg}.jpg?v=3`);
+        if (ch.img) urls.add(`images/${ch.img}.webp?v=7`);
+        if (ch.bg) urls.add(`images/bg_${ch.bg}_s.jpg?v=4`);
       }
       // 元素图标
       ['cryo','electro','pyro','dendro','geo','anemo','hydro'].forEach(el => {
@@ -476,7 +476,7 @@
       if (ch.bg) {
         const bgImg = document.createElement('img');
         bgImg.className = 'tile-bg-img';
-        bgImg.src = `images/bg_${ch.bg}.jpg?v=3`;
+        bgImg.src = `images/bg_${ch.bg}_s.jpg?v=4`;
         bgImg.alt = '';
         bgImg.onerror = () => { bgImg.remove(); bgWrap.classList.add('bg-fallback'); };
         bgWrap.appendChild(bgImg);
@@ -488,7 +488,7 @@
       if (ch.img) {
         const portrait = document.createElement('img');
         portrait.className = 'tile-portrait';
-        portrait.src = `images/${ch.img}.webp?v=6`;
+        portrait.src = `images/${ch.img}.webp?v=7`;
         portrait.onerror = () => portrait.remove();
         inner.appendChild(portrait);
       }
