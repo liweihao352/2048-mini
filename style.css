@@ -1,0 +1,775 @@
+/* ============================================================
+   2048 双主题样式：朴素 (classic) / 原神 (genshin)
+   通过 body[data-theme="..."] 切换 CSS 变量
+   ============================================================ */
+
+:root {
+  --gap: 2.5%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+body {
+  font-family: "Clear Sans", "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px 10px;
+  overscroll-behavior: none;
+  /* 主题相关变量默认值 = 朴素风格 */
+  --bg-page: #faf8ef;
+  --bg-board: #bbada0;
+  --bg-cell: rgba(238, 228, 218, 0.35);
+  --color-text: #776e65;
+  --color-title: #776e65;
+  --color-score-label: #eee4da;
+  --bg-score-box: #bbada0;
+  --color-score-value: #ffffff;
+  --bg-button: #8f7a66;
+  --bg-button-hover: #9f8b77;
+  --color-button: #f9f6f2;
+  --border-board: none;
+  --box-shadow-board: none;
+  background: var(--bg-page);
+  transition: background 0.4s ease;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ===== 顶部标题与分数 ===== */
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--color-title);
+  line-height: 1;
+}
+
+.scores {
+  display: flex;
+  gap: 8px;
+}
+
+.score-box {
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 92px;
+  height: 70px;
+  background: var(--bg-score-box);
+  border-radius: 6px;
+  color: var(--color-score-value);
+  transition: background 0.4s ease;
+}
+
+.score-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-score-label);
+}
+
+.score-value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.score-addition {
+  position: absolute;
+  font-size: 22px;
+  font-weight: 800;
+  color: rgba(119, 110, 101, 0.9);
+  animation: score-add 0.6s ease-in-out forwards;
+  pointer-events: none;
+}
+
+@keyframes score-add {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-26px); }
+}
+
+/* ===== 副标题与按钮区 ===== */
+.above-game {
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.game-intro {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.theme-label {
+  white-space: nowrap;
+}
+
+#theme-select {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid var(--bg-button);
+  background: var(--bg-score-box);
+  color: var(--color-button);
+  cursor: pointer;
+  outline: none;
+}
+
+a.restart-button, a.retry-button, a.keep-playing-button {
+  display: inline-block;
+  background: var(--bg-button);
+  border-radius: 6px;
+  padding: 10px 18px;
+  color: var(--color-button);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, transform 0.05s;
+  white-space: nowrap;
+}
+
+a.restart-button:hover, a.retry-button:hover, a.keep-playing-button:hover {
+  background: var(--bg-button-hover);
+}
+
+/* 按钮组（New Game + 清除最高分） */
+.button-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 清除最高分按钮：小号、次要样式 */
+a.clear-best-button {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--bg-button);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+a.clear-best-button:hover {
+  background: var(--bg-button);
+  color: var(--color-button);
+}
+
+a.restart-button:active, a.retry-button:active, a.keep-playing-button:active {
+  transform: translateY(1px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===== 棋盘容器 ===== */
+.game-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  background: var(--bg-board);
+  border: var(--border-board);
+  border-radius: 8px;
+  touch-action: none;
+  box-shadow: var(--box-shadow-board);
+  transition: background 0.4s ease, border 0.4s ease, box-shadow 0.4s ease;
+}
+
+.grid-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--gap);
+  gap: var(--gap);
+}
+
+.grid-row {
+  display: flex;
+  flex: 1 1 0;
+  gap: var(--gap);
+}
+
+.grid-cell {
+  flex: 1 1 0;
+  background: var(--bg-cell);
+  border-radius: 4px;
+  transition: background 0.4s ease;
+}
+
+/* ===== 方块层 ===== */
+.tile-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  border-radius: 4px;
+  transition: transform 0.12s ease-in-out;
+  will-change: transform;
+  /* 注意：不设 overflow:hidden，让 128+ 的外围光环(::before 的 box-shadow)能溢出显示。
+     裁剪立绘/背景图的工作交给 .tile-inner（见下）。 */
+}
+
+.tile-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  overflow: hidden;
+}
+
+.tile-new .tile-inner {
+  animation: appear 0.18s ease-in-out;
+}
+
+.tile-merged .tile-inner {
+  animation: pop 0.18s ease-in-out;
+  z-index: 20;
+}
+
+@keyframes appear {
+  0%   { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pop {
+  0%   { transform: scale(0); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* 特效画布层：覆盖整个棋盘，不阻挡触摸 */
+.fx-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ===== 朴素风格方块配色（默认） ===== */
+.tile-number {
+  font-size: clamp(20px, 8vw, 48px);
+}
+
+.tile-2     .tile-inner { background: #eee4da; color: #776e65; }
+.tile-4     .tile-inner { background: #ede0c8; color: #776e65; }
+.tile-8     .tile-inner { background: #f2b179; color: #f9f6f2; }
+.tile-16    .tile-inner { background: #f59563; color: #f9f6f2; }
+.tile-32    .tile-inner { background: #f67c5f; color: #f9f6f2; }
+.tile-64    .tile-inner { background: #f65e3b; color: #f9f6f2; }
+.tile-128   .tile-inner { background: #edcf72; color: #f9f6f2; }
+.tile-128   .tile-number { font-size: clamp(18px, 7vw, 42px); }
+.tile-256   .tile-inner { background: #f39c3d; color: #fff; box-shadow: 0 0 20px 4px rgba(243, 156, 61, 0.55); }
+.tile-256   .tile-number { font-size: clamp(18px, 7vw, 42px); }
+.tile-512   .tile-inner { background: #ee5a3a; color: #fff; box-shadow: 0 0 24px 6px rgba(238, 90, 58, 0.6); }
+.tile-512   .tile-number { font-size: clamp(18px, 7vw, 42px); }
+.tile-1024  .tile-inner { background: #c0408a; color: #fff; box-shadow: 0 0 28px 8px rgba(192, 64, 138, 0.65); }
+.tile-1024  .tile-number { font-size: clamp(15px, 6vw, 36px); }
+.tile-2048  .tile-inner { background: #7b3fb5; color: #fff; box-shadow: 0 0 32px 10px rgba(123, 63, 181, 0.7); }
+.tile-2048  .tile-number { font-size: clamp(15px, 6vw, 36px); }
+.tile-super .tile-inner { background: #4a2370; color: #fff; }
+.tile-super .tile-number { font-size: clamp(13px, 5vw, 30px); }
+
+/* ===== 游戏结束 / 胜利覆盖层 ===== */
+.game-message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(238, 228, 218, 0.73);
+  border-radius: 8px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  z-index: 100;
+}
+
+.game-message.game-won {
+  background: rgba(237, 194, 46, 0.5);
+}
+
+.game-message.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.game-message p {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--color-title);
+  margin-bottom: 24px;
+}
+
+.message-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.game-explanation {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+/* ============================================================
+   原神风格 (genshin)
+   ============================================================ */
+body[data-theme="genshin"] {
+  --bg-page: #0d1429;
+  --bg-board: rgba(30, 35, 70, 0.75);
+  --bg-cell: rgba(80, 95, 160, 0.18);
+  --color-text: #2a3050;
+  --color-title: #6a4a1a;
+  --color-score-label: #8ea8d6;
+  --bg-score-box: rgba(25, 35, 75, 0.85);
+  --color-score-value: #f5d98c;
+  --bg-button: linear-gradient(135deg, #b8965a, #7a5f2e);
+  --bg-button-hover: linear-gradient(135deg, #d4af6e, #9a7a3e);
+  --color-button: #fff5dc;
+  --border-board: 2px solid rgba(212, 175, 110, 0.6);
+  --box-shadow-board: 0 0 40px rgba(80, 120, 220, 0.3), inset 0 0 30px rgba(120, 150, 220, 0.1);
+  /* 大背景：明亮清新的提瓦特场景 + 轻度半透明白蒙版（保证文字可读）+ 暖色光晕 */
+  background:
+    linear-gradient(180deg, rgba(245, 248, 255, 0.45) 0%, rgba(220, 230, 250, 0.55) 100%),
+    radial-gradient(ellipse at 25% 10%, rgba(255, 240, 200, 0.3), transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(180, 210, 250, 0.25), transparent 55%),
+    url("images/bg.jpg") center/cover no-repeat fixed;
+  background-attachment: fixed;
+}
+
+body[data-theme="genshin"] .title {
+  background: linear-gradient(135deg, #8a5a1a, #6a4210, #4a2e08);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+  filter: drop-shadow(0 0 1px rgba(106,74,26,0.8));
+}
+
+body[data-theme="genshin"] a.restart-button,
+body[data-theme="genshin"] a.retry-button,
+body[data-theme="genshin"] a.keep-playing-button {
+  background: var(--bg-button);
+  border: 1px solid rgba(212, 175, 110, 0.5);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+body[data-theme="genshin"] #theme-select {
+  background: rgba(25, 35, 75, 0.85);
+  border: 1px solid rgba(212, 175, 110, 0.5);
+}
+
+body[data-theme="genshin"] .game-message {
+  background: rgba(13, 20, 41, 0.85);
+}
+body[data-theme="genshin"] .game-message.game-won {
+  background: rgba(212, 175, 110, 0.4);
+}
+
+/* 原神方块：元素渐变背景 + 立绘图。
+   底色用深色兜底，避免背景图解码空窗时朴素浅底色穿透造成"闪白"。 */
+body[data-theme="genshin"] .tile-inner {
+  background: #141d3a;
+  background-blend-mode: overlay;
+}
+
+/* ===== 原神方块层级（从底到顶）=====
+   .tile-bg (wrap, z0) > .tile-bg-img 角色元素氛围背景图（整块覆盖）
+   .tile-portrait 角色立绘 (z1，半透明叠加)
+   .tile-number / .tile-element / .tile-name (z3-4)
+   缺背景图时 .tile-bg 加 .bg-fallback 类，回退到元素色渐变 + 元素图标水印 */
+
+/* 背景图容器：占满方块，最底层 */
+body[data-theme="genshin"] .tile-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+/* 角色氛围背景图：整块铺满 */
+body[data-theme="genshin"] .tile-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* 2/4/8（低数值，背景可简单）：背景图较透明，叠加元素色蒙版 */
+body[data-theme="genshin"] .tile-2 .tile-bg-img,
+body[data-theme="genshin"] .tile-4 .tile-bg-img,
+body[data-theme="genshin"] .tile-8 .tile-bg-img {
+  opacity: 0.78;
+}
+/* 低数值在背景图上再叠一层元素色，增强主题统一感（透明度降低，保留背景可见度） */
+body[data-theme="genshin"] .tile-2 .tile-bg::after,
+body[data-theme="genshin"] .tile-4 .tile-bg::after,
+body[data-theme="genshin"] .tile-8 .tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--elem-color) 35%, transparent), color-mix(in srgb, var(--elem-color) 15%, transparent));
+}
+/* 16+ 背景图全显示，仅轻微暗化保证数字可读（减弱暗化，让背景更清晰） */
+body[data-theme="genshin"] .tile-16 .tile-bg::after,
+body[data-theme="genshin"] .tile-32 .tile-bg::after,
+body[data-theme="genshin"] .tile-64 .tile-bg::after,
+body[data-theme="genshin"] .tile-128 .tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.25) 100%);
+}
+/* 高数值（256+）背景增强：饱和度与对比度提升，更华丽 */
+body[data-theme="genshin"] .tile-256 .tile-bg-img,
+body[data-theme="genshin"] .tile-512 .tile-bg-img { filter: saturate(1.25) contrast(1.1); }
+body[data-theme="genshin"] .tile-256 .tile-bg::after,
+body[data-theme="genshin"] .tile-512 .tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, transparent 30%, color-mix(in srgb, var(--elem-color) 35%, transparent) 100%);
+}
+/* 1024 雷电：背景加强发光，叠加紫电氛围 */
+body[data-theme="genshin"] .tile-1024 .tile-bg-img { filter: saturate(1.35) contrast(1.15) brightness(1.05); }
+body[data-theme="genshin"] .tile-1024 .tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, transparent 25%, rgba(150,80,216,0.4) 100%),
+    repeating-linear-gradient(115deg, transparent 0 22px, rgba(200,160,255,0.1) 22px 24px, transparent 24px 46px);
+}
+/* 2048 芙宁娜：最华丽——金边发光 + 星芒叠加 */
+body[data-theme="genshin"] .tile-2048 .tile-bg-img { filter: saturate(1.4) contrast(1.18) brightness(1.08); }
+body[data-theme="genshin"] .tile-2048 .tile-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(255,240,180,0.3), transparent 45%),
+    radial-gradient(circle at 50% 35%, transparent 25%, rgba(74,168,216,0.4) 100%);
+}
+body[data-theme="genshin"] .tile-2048 { box-shadow: 0 0 30px 4px rgba(80,180,240,0.75); }
+body[data-theme="genshin"] .tile-1024 { box-shadow: 0 0 26px 3px rgba(150,80,216,0.7); }
+
+/* ============================================================
+   动态边框光效（128 及以上，数值越大越华丽）
+   设计原则：只在外围发光（box-shadow / outline），绝不用实心填充覆盖方块内部。
+   用 .tile::before 做"外扩光环"——它向方块外延伸，本体透明，不遮挡内容。
+   朴素模式下不生效（全部规则限定 genshin）。
+   ============================================================ */
+body[data-theme="genshin"] .tile-128::before,
+body[data-theme="genshin"] .tile-256::before,
+body[data-theme="genshin"] .tile-512::before,
+body[data-theme="genshin"] .tile-1024::before,
+body[data-theme="genshin"] .tile-2048::before {
+  content: "";
+  position: absolute;
+  /* 向外扩展，光环在方块外围；本体 background 透明，绝不遮挡内部 */
+  inset: -3px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 7;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+/* 128：柔和金色呼吸光环 */
+body[data-theme="genshin"] .tile-128::before {
+  box-shadow: 0 0 10px 1px rgba(227, 205, 101, 0.55);
+  border: 1.5px solid rgba(227, 205, 101, 0.6);
+  animation: glow-breathe 2.6s ease-in-out infinite;
+}
+/* 256：橙金呼吸，更亮更明显 */
+body[data-theme="genshin"] .tile-256::before {
+  box-shadow: 0 0 14px 2px rgba(243, 156, 61, 0.7), 0 0 4px 1px rgba(255, 200, 100, 0.5);
+  border: 1.5px solid rgba(243, 156, 61, 0.75);
+  animation: glow-breathe 2.1s ease-in-out infinite;
+}
+/* 512：橙红双层呼吸 + 微旋转金点光环 */
+body[data-theme="genshin"] .tile-512::before {
+  box-shadow:
+    0 0 16px 2px rgba(238, 90, 58, 0.7),
+    0 0 6px 1px rgba(255, 180, 80, 0.5);
+  border: 1.5px solid rgba(255, 140, 70, 0.8);
+  animation: glow-breathe 1.8s ease-in-out infinite;
+}
+/* 1024 芙宁娜：金蓝多层光环（外发光呼吸，多层发光） */
+body[data-theme="genshin"] .tile-1024::before {
+  box-shadow:
+    0 0 22px 4px rgba(255, 215, 0, 0.7),
+    0 0 12px 3px rgba(120, 200, 255, 0.6),
+    0 0 4px 1px rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(255, 220, 120, 0.9);
+  animation: glow-breathe 1.6s ease-in-out infinite;
+}
+/* 2048 雷电将军：紫电光环 + 闪电脉冲（最华丽，外发光呼吸 + 亮度脉冲） */
+body[data-theme="genshin"] .tile-2048::before {
+  box-shadow:
+    0 0 24px 4px rgba(150, 80, 216, 0.8),
+    0 0 10px 2px rgba(200, 130, 255, 0.65),
+    0 0 4px 1px rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(180, 110, 240, 0.9);
+  animation: glow-breathe 1.4s ease-in-out infinite;
+}
+
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.55; filter: brightness(1); }
+  50%      { opacity: 1; filter: brightness(1.35); }
+}
+
+/* ============================================================
+   方块内动效（1024 / 2048）
+   用 .tile-inner::before 叠加白色亮光从左到右扫过，
+   半透明 + screen 混合（只增亮不遮挡），mask 限制在上部不挡底部数字。
+   ============================================================ */
+body[data-theme="genshin"] .tile-1024 .tile-inner::before,
+body[data-theme="genshin"] .tile-2048 .tile-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* 仅覆盖上部，给底部数字留出干净区域 */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 76%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 76%);
+}
+/* 1024 芙宁娜：金蓝白色亮光从左到右扫过 */
+body[data-theme="genshin"] .tile-1024 .tile-inner::before {
+  background: linear-gradient(115deg,
+    transparent 38%,
+    rgba(160, 210, 255, 0.4) 47%,
+    rgba(255, 245, 210, 0.65) 50%,
+    rgba(160, 210, 255, 0.4) 53%,
+    transparent 62%);
+  background-size: 280% 100%;
+  animation: spark-sweep 2.6s linear infinite;
+}
+/* 2048 雷电将军：紫色亮光从左到右扫过（更亮） */
+body[data-theme="genshin"] .tile-2048 .tile-inner::before {
+  background: linear-gradient(115deg,
+    transparent 38%,
+    rgba(190, 140, 255, 0.5) 47%,
+    rgba(240, 220, 255, 0.75) 50%,
+    rgba(190, 140, 255, 0.5) 53%,
+    transparent 62%);
+  background-size: 280% 100%;
+  animation: spark-sweep 2.2s linear infinite;
+}
+
+@keyframes spark-sweep {
+  0%   { background-position: 160% 0; }
+  100% { background-position: -160% 0; }
+}
+
+/* 注意：原神合并金光脉冲用 .tile-merged .tile-inner::after；
+   1024/2048 的方块内流光用 .tile-inner::before，两者不冲突。
+   移除了旧的 .tile-2048::after 涟漪（避免与边框光环视觉混乱）。*/
+
+
+/* 缺背景图回退：元素色渐变 + 元素图标水印 */
+body[data-theme="genshin"] .tile-bg.bg-fallback {
+  background:
+    radial-gradient(circle at 50% 25%, color-mix(in srgb, var(--elem-color) 60%, transparent), transparent 75%),
+    linear-gradient(160deg, color-mix(in srgb, var(--elem-color) 45%, #141d3a), #141d3a);
+}
+body[data-theme="genshin"] .tile-bg.bg-fallback::after {
+  content: var(--elem-symbol, "");
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50%;
+  opacity: 0.2;
+}
+
+/* 立绘：透明背景 PNG，整张图占满整个方块（100%）。
+   统一规则：cover 填满宽度，object-position: top 让头顶对齐方块顶部。
+   立绘占满整个方块，底部数字浮在其上（数字有半透明底条保证可读）。
+   立绘本身透明，不会遮挡下方的角色氛围背景图。 */
+body[data-theme="genshin"] .tile-portrait {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;            /* 占满整个方块，解决立绘下1/5被截断问题 */
+  object-fit: cover;       /* cover 填满宽度 */
+  object-position: center top;  /* 头顶对齐方块顶部，完整保留头部 */
+  z-index: 1;
+  /* 轻微投影增强立体感 */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  display: none;
+}
+body[data-theme="genshin"] .tile.has-portrait .tile-portrait { display: block; }
+
+/* 神里绫华(4)：立绘往下移，使头部明显低于其他角色。
+   绫华原图上方大部分是法杖，实际头部在图片约55-60%处。
+   经实测：object-position 的 Y 值越小，图片越往下移（头部越靠方块下方）。
+   默认其他角色用 center top(0%) 头在顶部；绫华用 25% 让头部下移到方块下部。 */
+body[data-theme="genshin"] .tile-4 .tile-portrait {
+  object-position: center 25%;
+}
+
+/* 数字标签：原神模式下置于方块底部，字号适度，让立绘面部（上 1/3）完全不被遮挡 */
+body[data-theme="genshin"] .tile-number {
+  position: absolute;
+  bottom: 15%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,1);
+  font-size: clamp(16px, 6vw, 32px);
+  line-height: 1;
+}
+
+/* 元素符号角标 */
+body[data-theme="genshin"] .tile-element {
+  position: absolute;
+  top: 4%;
+  right: 5%;
+  font-size: clamp(14px, 5vw, 24px);
+  z-index: 4;
+  filter: drop-shadow(0 0 5px var(--elem-glow, rgba(255,255,255,0.9)));
+  opacity: 0.85;
+}
+
+/* 角色名标签：底部半透明底条，确保可读 */
+body[data-theme="genshin"] .tile-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+  font-size: clamp(9px, 3vw, 13px);
+  font-weight: 700;
+  color: #fff;
+  padding: 3px 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.55));
+  text-shadow: 0 0 6px rgba(0,0,0,1), 0 1px 2px rgba(0,0,0,1);
+  letter-spacing: 0.5px;
+}
+
+/* 朴素风格下隐藏原神专属元素 */
+body[data-theme="classic"] .tile-portrait,
+body[data-theme="classic"] .tile-element,
+body[data-theme="classic"] .tile-name,
+body[data-theme="classic"] .tile-bg {
+  display: none;
+}
+
+/* ---- 原神各数字元素色（基于官方元素取色，按色系冷→暖排序） ---- */
+body[data-theme="genshin"] .tile-2     { --elem-color: #7fd0e8; --elem-glow: rgba(127,208,232,0.95); }   /* 甘雨 冰 */
+body[data-theme="genshin"] .tile-4     { --elem-color: #9be0ee; --elem-glow: rgba(155,224,238,0.95); }   /* 绫华 冰(亮) */
+body[data-theme="genshin"] .tile-8     { --elem-color: #b993e4; --elem-glow: rgba(185,147,228,0.95); }   /* 刻晴 雷 */
+body[data-theme="genshin"] .tile-16    { --elem-color: #ec4923; --elem-glow: rgba(236,73,35,0.95); }     /* 胡桃 火 */
+body[data-theme="genshin"] .tile-32    { --elem-color: #359697; --elem-glow: rgba(53,150,151,0.95); }     /* 散兵 风 */
+body[data-theme="genshin"] .tile-64    { --elem-color: #a6c938; --elem-glow: rgba(166,201,56,0.95); }    /* 纳西妲 草 */
+body[data-theme="genshin"] .tile-128   { --elem-color: #e3cd65; --elem-glow: rgba(227,205,101,0.95); }   /* 钟离 岩 */
+body[data-theme="genshin"] .tile-256   { --elem-color: #359697; --elem-glow: rgba(53,150,151,0.95); }    /* 万叶 风 */
+body[data-theme="genshin"] .tile-512   { --elem-color: #4aa8d8; --elem-glow: rgba(74,168,216,0.95); }    /* 那维莱特 水 */
+body[data-theme="genshin"] .tile-1024  { --elem-color: #5fb8e8; --elem-glow: rgba(95,184,232,1); }       /* 芙宁娜 水(亮) */
+body[data-theme="genshin"] .tile-2048  { --elem-color: #9650d8; --elem-glow: rgba(150,80,216,1); }       /* 雷电 雷(深) */
+body[data-theme="genshin"] .tile-super { --elem-color: #6a3aa0; --elem-glow: rgba(150,80,220,0.95); }
+
+/* 原神合并金光脉冲 */
+body[data-theme="genshin"] .tile-merged .tile-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 4px;
+  box-shadow: 0 0 25px 6px var(--elem-glow);
+  animation: merge-flash 0.4s ease-out;
+  pointer-events: none;
+}
+
+@keyframes merge-flash {
+  0%   { opacity: 0.9; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* ============================================================
+   小屏适配
+   ============================================================ */
+@media (max-width: 520px) {
+  .title { font-size: 48px; }
+  .score-box { width: 76px; height: 60px; }
+  .score-value { font-size: 22px; }
+  .score-label { font-size: 11px; }
+  .game-message p { font-size: 36px; }
+}

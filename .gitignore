@@ -1,0 +1,16 @@
+# 依赖（部署不需要，本地抠图用的）
+node_modules/
+
+# 临时/诊断文件
+_*.png
+_*.jpg
+_*.txt
+images/_*/
+
+# 日志和系统文件
+*.log
+.DS_Store
+Thumbs.db
+
+# ZCode 工作区
+.zcode/

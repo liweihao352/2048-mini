@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>2048</title>
+  <link rel="stylesheet" href="style.css?v=12" />
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部：标题与分数 -->
+    <header class="heading">
+      <h1 class="title">2048</h1>
+      <div class="scores">
+        <div class="score-box">
+          <div class="score-label">SCORE</div>
+          <div id="score" class="score-value">0</div>
+        </div>
+        <div class="score-box">
+          <div class="score-label">BEST</div>
+          <div id="best" class="score-value">0</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 副标题与操作区 -->
+    <div class="above-game">
+      <p class="game-intro">
+        合并相同数字，挑战 <strong>2048</strong>！使用 <strong>方向键</strong> 或 <strong>滑动</strong> 操作。
+      </p>
+      <div class="controls">
+        <!-- 风格切换下拉框 -->
+        <label class="theme-switcher">
+          <span class="theme-label">风格</span>
+          <select id="theme-select">
+            <option value="classic">朴素</option>
+            <option value="genshin">原神</option>
+          </select>
+        </label>
+        <div class="button-group">
+          <a id="new-game" class="restart-button">New Game</a>
+          <a id="clear-best" class="clear-best-button" title="清除最高分记录">清除最高分</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 棋盘 -->
+    <div class="game-container">
+      <!-- 背景格子 -->
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <!-- 动态方块层（绝对定位的 .tile） -->
+      <div id="tile-container" class="tile-container"></div>
+
+      <!-- 粒子特效画布层（不阻挡触摸） -->
+      <canvas id="fx-canvas" class="fx-canvas"></canvas>
+
+      <!-- 游戏结束 / 胜利覆盖层 -->
+      <div id="game-message" class="game-message">
+        <p id="game-message-text"></p>
+        <div class="message-buttons">
+          <a id="keep-going-button" class="keep-playing-button hidden">Keep going</a>
+          <a id="retry-button" class="retry-button">Try again</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="game-explanation">
+      <strong>玩法：</strong>方向键移动方块。两个相同数字相撞会合并为一个，数值翻倍。
+      每次移动后在空位生成新方块（2 或 4）。无法移动时游戏结束。
+    </p>
+  </div>
+
+  <script src="game.js?v=11"></script>
+</body>
+</html>
