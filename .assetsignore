@@ -1,0 +1,7 @@
+# 部署时排除非网站文件（wrangler 默认已忽略 node_modules 和 . 开头的隐藏文件）
+wrangler.jsonc
+package.json
+package-lock.json
+README.md
+LICENSE
+DISCLAIMER

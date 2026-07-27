@@ -1,0 +1,9 @@
+{
+  "name": "2048-mini",
+  "compatibility_date": "2026-07-27",
+  // 纯静态站点：只部署静态资源，无 Worker 入口脚本
+  "assets": {
+    "directory": ".",
+    "not_found_handling": "404-page"
+  }
+}
