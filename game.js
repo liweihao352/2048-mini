@@ -92,11 +92,21 @@
   }
 
   // 加载单张图，返回 Promise（onerror 也 resolve，避免卡住）
-  function loadImage(url) {
+  // 加载单张图，返回 Promise（onerror 也 resolve，避免卡住）。
+  // 关键：带超时（默认 8 秒），防止慢网下请求 hang 住导致 Promise.all 永不完成 → 白屏。
+  function loadImage(url, timeoutMs = 8000) {
     return new Promise(resolve => {
       const img = new Image();
-      img.onload = () => resolve({ url, ok: true, img });
-      img.onerror = () => resolve({ url, ok: false, img: null });
+      let settled = false;
+      const finish = (ok, image) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve({ url, ok, img: image });
+      };
+      const timer = setTimeout(() => finish(false, null), timeoutMs);
+      img.onload = () => finish(true, img);
+      img.onerror = () => finish(false, null);
       img.src = url;
     });
   }
