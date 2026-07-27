@@ -380,6 +380,28 @@ a.restart-button:active, a.retry-button:active, a.keep-playing-button:active {
   color: var(--color-text);
 }
 
+/* 版权与免责声明区 */
+.legal-footer {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent);
+  text-align: center;
+}
+.legal-line {
+  margin: 0 0 6px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.legal-line em { font-style: italic; }
+.legal-line a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-line a:hover { color: var(--color-text); }
+.legal-meta { font-size: 10px; opacity: 0.85; }
+
 /* ============================================================
    原神风格 (genshin)
    ============================================================ */

@@ -770,4 +770,8 @@
   preloadPortraits();
   init();
   requestAnimationFrame(updateFx);
+
+  // 版权声明年份自动填充
+  const yearEl = document.getElementById('legal-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();
