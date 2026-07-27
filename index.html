@@ -4,9 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>2048</title>
-  <link rel="stylesheet" href="style.css?v=13" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
+  <!-- 加载界面：图片资源全部就绪前覆盖游戏区 -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-logo">2048</div>
+      <div class="loading-bar-wrap">
+        <div id="loading-bar" class="loading-bar" style="width: 0%"></div>
+      </div>
+      <div class="loading-text">加载中… <span id="loading-percent">0</span>%</div>
+      <div class="loading-hint">首次访问需下载图片资源，请稍候</div>
+    </div>
+  </div>
+
   <div class="container">
     <!-- 顶部：标题与分数 -->
     <header class="heading">
@@ -106,6 +118,6 @@
     </footer>
   </div>
 
-  <script src="game.js?v=11"></script>
+  <script src="game.js?v=12"></script>
 </body>
 </html>

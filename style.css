@@ -43,6 +43,96 @@ body {
   transition: background 0.4s ease;
 }
 
+/* ============================================================
+   加载界面（图片资源就绪前覆盖游戏区）
+   ============================================================ */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 默认用朴素底色；原神模式由下方规则覆盖为 bg.jpg */
+  background: var(--bg-page);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+/* 原神模式：加载层用大背景图（图加载好后透过 body 可见，加载层本身也用同图保持无缝） */
+body[data-theme="genshin"] .loading-screen {
+  background: var(--bg-page) url("images/bg.jpg") center/cover no-repeat fixed;
+}
+/* 加载完成后淡出隐藏 */
+.loading-screen.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-content {
+  text-align: center;
+  padding: 30px 40px;
+  /* 半透明卡片，保证文字在任何背景下可读 */
+  background: rgba(20, 25, 50, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+/* 朴素模式下卡片用浅色调 */
+body:not([data-theme="genshin"]) .loading-content,
+body[data-theme="classic"] .loading-content {
+  background: rgba(250, 248, 239, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+.loading-logo {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+body[data-theme="classic"] .loading-logo {
+  color: var(--color-title);
+  text-shadow: none;
+}
+.loading-bar-wrap {
+  width: 220px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 auto 14px;
+}
+body[data-theme="classic"] .loading-bar-wrap {
+  background: rgba(0, 0, 0, 0.1);
+}
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4aa8d8, #5fb8e8);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+body[data-theme="classic"] .loading-bar {
+  background: linear-gradient(90deg, #8f7a66, #f39c3d);
+}
+.loading-text {
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+body[data-theme="classic"] .loading-text {
+  color: var(--color-text);
+  text-shadow: none;
+}
+.loading-hint {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  margin-top: 8px;
+}
+body[data-theme="classic"] .loading-hint {
+  color: rgba(119, 110, 101, 0.7);
+}
+
 .container {
   width: 100%;
   max-width: 500px;

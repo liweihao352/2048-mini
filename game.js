@@ -66,23 +66,61 @@
   // 演示模式：URL 带 ?demo 时开启，初始填入 11 种方块各一个，禁止移动，便于观察效果
   const demoMode = new URLSearchParams(window.location.search).has('demo');
 
-  // 预加载立绘图，避免首次渲染闪烁
+  // 立绘缓存（buildTileInner 复用，避免重复创建 Image）
   const portraitCache = new Map();
-  function preloadPortraits() {
-    for (const value in GENSHIN_CHARS) {
-      const ch = GENSHIN_CHARS[value];
-      // 预加载立绘
-      if (ch.img) {
-        const img = new Image();
-        img.src = `images/${ch.img}.webp?v=6`;
-        portraitCache.set(ch.img, img);
+
+  // ===== 资源预加载（带进度跟踪）=====
+  // 收集当前主题所需加载的所有图片 URL，并发加载并报告进度。
+  // 朴素模式几乎无图（仅可能的背景）；原神模式加载立绘+背景+元素图标+主背景。
+  function collectAssetUrls(currentTheme) {
+    const urls = new Set();
+    if (currentTheme === 'genshin') {
+      // 主大背景
+      urls.add('images/bg.jpg');
+      // 立绘 + 角色氛围背景
+      for (const value in GENSHIN_CHARS) {
+        const ch = GENSHIN_CHARS[value];
+        if (ch.img) urls.add(`images/${ch.img}.webp?v=6`);
+        if (ch.bg) urls.add(`images/bg_${ch.bg}.jpg?v=3`);
       }
-      // 预加载角色氛围背景图（.jpg），消除移动时首次解码空窗
-      if (ch.bg) {
-        const bg = new Image();
-        bg.src = `images/bg_${ch.bg}.jpg`;
-      }
+      // 元素图标
+      ['cryo','electro','pyro','dendro','geo','anemo','hydro'].forEach(el => {
+        urls.add(`images/elem_${el}.webp`);
+      });
     }
+    return Array.from(urls);
+  }
+
+  // 加载单张图，返回 Promise（onerror 也 resolve，避免卡住）
+  function loadImage(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve({ url, ok: true, img });
+      img.onerror = () => resolve({ url, ok: false, img: null });
+      img.src = url;
+    });
+  }
+
+  // 预加载全部资源，onProgress(0~100) 报告进度。返回 Promise。
+  async function preloadAssets(currentTheme, onProgress) {
+    const urls = collectAssetUrls(currentTheme);
+    if (urls.length === 0) { onProgress(100); return; }
+    let done = 0;
+    const total = urls.length;
+    // 缓存立绘供 buildTileInner 复用
+    const results = await Promise.all(urls.map(url =>
+      loadImage(url).then(r => {
+        done++;
+        onProgress(Math.round(done / total * 100));
+        // 立绘图缓存到 portraitCache
+        if (r.ok && r.img && /\.webp\?/.test(url) && !url.includes('elem_') && !url.includes('bg')) {
+          const key = url.match(/images\/([^?]+)/)[1].replace('.webp', '');
+          portraitCache.set(key, r.img);
+        }
+        return r;
+      })
+    ));
+    return results;
   }
 
   // ===== 主题 =====
@@ -764,12 +802,40 @@
   });
 
   // ===== 启动 =====
+  // 先读主题，设置到 body 让加载层样式就位（不调 applyTheme，避免图片未就绪时闪）
   loadBest();
   bestEl.textContent = bestScore;
-  loadTheme();
-  preloadPortraits();
-  init();
-  requestAnimationFrame(updateFx);
+  theme = localStorage.getItem('theme-2048') || 'classic';
+  document.body.setAttribute('data-theme', theme);
+
+  // 加载界面 DOM 引用
+  const loadingScreen = document.getElementById('loading-screen');
+  const loadingBar = document.getElementById('loading-bar');
+  const loadingPercent = document.getElementById('loading-percent');
+
+  // 预加载资源 → 完成后启动游戏
+  // 记录开始时间，确保加载界面至少显示 400ms（避免缓存命中时一闪而过显得突兀）
+  const loadStart = Date.now();
+  const MIN_LOADING_MS = 400;
+  preloadAssets(theme, (pct) => {
+    if (loadingBar) loadingBar.style.width = pct + '%';
+    if (loadingPercent) loadingPercent.textContent = pct;
+  }).then(() => {
+    const elapsed = Date.now() - loadStart;
+    const startGame = () => {
+      // 资源就绪，正式应用主题（触发背景图显示）并启动游戏
+      applyTheme();
+      init();
+      requestAnimationFrame(updateFx);
+      // 淡出加载层
+      if (loadingScreen) loadingScreen.classList.add('loaded');
+    };
+    if (elapsed < MIN_LOADING_MS) {
+      setTimeout(startGame, MIN_LOADING_MS - elapsed);
+    } else {
+      startGame();
+    }
+  });
 
   // 版权声明年份自动填充
   const yearEl = document.getElementById('legal-year');
